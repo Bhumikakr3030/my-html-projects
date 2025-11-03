@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COVID-19 Information & Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #3498db;
+            --primary-dark: #2980b9;
+            --secondary: #e74c3c;
+            --accent: #2ecc71;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --text: #34495e;
+            --text-light: #7f8c8d;
+            --white: #ffffff;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --radius: 8px;
+        }
+
+        body {
+            background-color: #f9f9f9;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--white);
+            padding: 1rem 0;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo i {
+            margin-right: 10px;
+            font-size: 2rem;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 1.5rem;
+        }
+
+        nav ul li a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            color: var(--light);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(44, 62, 80, 0.8), rgba(44, 62, 80, 0.8));
+            color: var(--white);
+            padding: 4rem 0;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        .cta-button {
+            background: var(--secondary);
+            color: var(--white);
+            border: none;
+            padding: 0.8rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .cta-button:hover {
+            background: #c0392b;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Stats Section */
+        .stats {
+            padding: 3rem 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .section-title h2 {
+            font-size: 2.2rem;
+            color: var(--dark);
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+
+        .section-title h2:after {
+            content: '';
+            position: absolute;
+            width: 70px;
+            height: 3px;
+            background: var(--primary);
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 2rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .confirmed .stat-icon {
+            color: var(--primary);
+        }
+
+        .active .stat-icon {
+            color: var(--secondary);
+        }
+
+        .recovered .stat-icon {
+            color: var(--accent);
+        }
+
+        .deceased .stat-icon {
+            color: var(--dark);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            color: var(--text-light);
+        }
+
+        /* Symptoms Section */
+        .symptoms {
+            padding: 3rem 0;
+            background-color: var(--light);
+        }
+
+        .symptoms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .symptom-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            box-shadow: var(--shadow);
+        }
+
+        .symptom-icon {
+            font-size: 2.5rem;
+            margin-right: 1.5rem;
+            color: var(--secondary);
+        }
+
+        .symptom-content h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .symptom-content p {
+            color: var(--text-light);
+        }
+
+        /* Prevention Section */
+        .prevention {
+            padding: 3rem 0;
+        }
+
+        .prevention-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .prevention-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 2rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .prevention-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .prevention-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .prevention-content h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+
+        .prevention-content p {
+            color: var(--text-light);
+        }
+
+        /* Resources Section */
+        .resources {
+            padding: 3rem 0;
+            background-color: var(--light);
+        }
+
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .resource-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .resource-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .resource-card ul {
+            list-style: none;
+        }
+
+        .resource-card ul li {
+            margin-bottom: 0.8rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .resource-card ul li:before {
+            content: '•';
+            color: var(--primary);
+            font-size: 1.5rem;
+            position: absolute;
+            left: 0;
+        }
+
+        .resource-card a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .resource-card a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: var(--white);
+            padding: 3rem 0 1rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-column h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-column h3:after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 2px;
+            background: var(--primary);
+            bottom: 0;
+            left: 0;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-column ul li a {
+            color: #ccc;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-column ul li a:hover {
+            color: var(--primary);
+            padding-left: 5px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            color: var(--white);
+            background: rgba(255, 255, 255, 0.1);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            nav ul {
+                margin: 1rem 0;
+                justify-content: center;
+            }
+            
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            nav ul {
+                flex-direction: column;
+            }
+            
+            nav ul li {
+                margin: 0.5rem 0;
+            }
+            
+            .stats-grid, .symptoms-grid, .prevention-grid, .resources-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-shield-virus"></i>
+                    <span>COVID-19 Tracker</span>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Statistics</a></li>
+                        <li><a href="#">Symptoms</a></li>
+                        <li><a href="#">Prevention</a></li>
+                        <li><a href="#">Resources</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>COVID-19 Information & Resources</h1>
+            <p>Stay informed with the latest updates, prevention tips, and resources about the coronavirus pandemic.</p>
+            <button class="cta-button">Get Latest Updates</button>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="container">
+            <div class="section-title">
+                <h2>Global Statistics</h2>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card confirmed">
+                    <div class="stat-icon">
+                        <i class="fas fa-virus"></i>
+                    </div>
+                    <div class="stat-number">675M</div>
+                    <div class="stat-label">Confirmed Cases</div>
+                </div>
+                
+                <div class="stat-card active">
+                    <div class="stat-icon">
+                        <i class="fas fa-procedures"></i>
+                    </div>
+                    <div class="stat-number">12.5M</div>
+                    <div class="stat-label">Active Cases</div>
+                </div>
+                
+                <div class="stat-card recovered">
+                    <div class="stat-icon">
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                    <div class="stat-number">648M</div>
+                    <div class="stat-label">Recovered</div>
+                </div>
+                
+                <div class="stat-card deceased">
+                    <div class="stat-icon">
+                        <i class="fas fa-skull-crossbones"></i>
+                    </div>
+                    <div class="stat-number">6.87M</div>
+                    <div class="stat-label">Deceased</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Symptoms Section -->
+    <section class="symptoms">
+        <div class="container">
+            <div class="section-title">
+                <h2>Common Symptoms</h2>
+            </div>
+            <div class="symptoms-grid">
+                <div class="symptom-card">
+                    <div class="symptom-icon">
+                        <i class="fas fa-temperature-high"></i>
+                    </div>
+                    <div class="symptom-content">
+                        <h3>Fever</h3>
+                        <p>High temperature is one of the most common symptoms of COVID-19.</p>
+                    </div>
+                </div>
+                
+                <div class="symptom-card">
+                    <div class="symptom-icon">
+                        <i class="fas fa-cough"></i>
+                    </div>
+                    <div class="symptom-content">
+                        <h3>Dry Cough</h3>
+                        <p>Persistent dry cough that doesn't produce mucus.</p>
+                    </div>
+                </div>
+                
+                <div class="symptom-card">
+                    <div class="symptom-icon">
+                        <i class="fas fa-tired"></i>
+                    </div>
+                    <div class="symptom-content">
+                        <h3>Fatigue</h3>
+                        <p>Extreme tiredness and lack of energy.</p>
+                    </div>
+                </div>
+                
+                <div class="symptom-card">
+                    <div class="symptom-icon">
+                        <i class="fas fa-lungs"></i>
+                    </div>
+                    <div class="symptom-content">
+                        <h3>Shortness of Breath</h3>
+                        <p>Difficulty breathing or feeling breathless.</p>
+                    </div>
+                </div>
+                
+                <div class="symptom-card">
+                    <div class="symptom-icon">
+                        <i class="fas fa-head-side-cough"></i>
+                    </div>
+                    <div class="symptom-content">
+                        <h3>Loss of Taste/Smell</h3>
+                        <p>Sudden loss of taste or smell without nasal congestion.</p>
+                    </div>
+                </div>
+                
+                <div class="symptom-card">
+                    <div class="symptom-icon">
+                        <i class="fas fa-headache"></i>
+                    </div>
+                    <div class="symptom-content">
+                        <h3>Headache & Body Aches</h3>
+                        <p>Persistent headaches and muscle or body aches.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Prevention Section -->
+    <section class="prevention">
+        <div class="container">
+            <div class="section-title">
+                <h2>Prevention Measures</h2>
+            </div>
+            <div class="prevention-grid">
+                <div class="prevention-card">
+                    <div class="prevention-icon">
+                        <i class="fas fa-hands-wash"></i>
+                    </div>
+                    <div class="prevention-content">
+                        <h3>Wash Hands</h3>
+                        <p>Wash your hands regularly with soap and water for at least 20 seconds.</p>
+                    </div>
+                </div>
+                
+                <div class="prevention-card">
+                    <div class="prevention-icon">
+                        <i class="fas fa-head-side-mask"></i>
+                    </div>
+                    <div class="prevention-content">
+                        <h3>Wear Mask</h3>
+                        <p>Wear a mask in public places and when around people who don't live with you.</p>
+                    </div>
+                </div>
+                
+                <div class="prevention-card">
+                    <div class="prevention-icon">
+                        <i class="fas fa-people-arrows"></i>
+                    </div>
+                    <div class="prevention-content">
+                        <h3>Social Distance</h3>
+                        <p>Maintain at least 6 feet distance from others in public spaces.</p>
+                    </div>
+                </div>
+                
+                <div class="prevention-card">
+                    <div class="prevention-icon">
+                        <i class="fas fa-house-user"></i>
+                    </div>
+                    <div class="prevention-content">
+                        <h3>Stay Home</h3>
+                        <p>Stay home when you're sick and avoid unnecessary outings.</p>
+                    </div>
+                </div>
+                
+                <div class="prevention-card">
+                    <div class="prevention-icon">
+                        <i class="fas fa-syringe"></i>
+                    </div>
+                    <div class="prevention-content">
+                        <h3>Get Vaccinated</h3>
+                        <p>Get vaccinated and stay up to date with booster shots when eligible.</p>
+                    </div>
+                </div>
+                
+                <div class="prevention-card">
+                    <div class="prevention-icon">
+                        <i class="fas fa-hand-sparkles"></i>
+                    </div>
+                    <div class="prevention-content">
+                        <h3>Sanitize</h3>
+                        <p>Clean and disinfect frequently touched surfaces daily.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Resources Section -->
+    <section class="resources">
+        <div class="container">
+            <div class="section-title">
+                <h2>Helpful Resources</h2>
+            </div>
+            <div class="resources-grid">
+                <div class="resource-card">
+                    <h3>Testing Centers</h3>
+                    <ul>
+                        <li><a href="#">Find COVID-19 testing locations near you</a></li>
+                        <li><a href="#">Home testing kit information</a></li>
+                        <li><a href="#">Testing guidelines and procedures</a></li>
+                        <li><a href="#">Testing for travel requirements</a></li>
+                    </ul>
+                </div>
+                
+                <div class="resource-card">
+                    <h3>Vaccination Information</h3>
+                    <ul>
+                        <li><a href="#">Vaccine availability and scheduling</a></li>
+                        <li><a href="#">Vaccine types and effectiveness</a></li>
+                        <li><a href="#">Booster shot information</a></li>
+                        <li><a href="#">Vaccine side effects and safety</a></li>
+                    </ul>
+                </div>
+                
+                <div class="resource-card">
+                    <h3>Emergency Contacts</h3>
+                    <ul>
+                        <li><a href="#">National COVID-19 helpline: 1-800-XXX-XXXX</a></li>
+                        <li><a href="#">Local health department contacts</a></li>
+                        <li><a href="#">Emergency medical services</a></li>
+                        <li><a href="#">Mental health support hotlines</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>About This Site</h3>
+                    <p>Providing accurate, up-to-date information about COVID-19 to help keep communities safe and informed.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Statistics</a></li>
+                        <li><a href="#">Symptoms</a></li>
+                        <li><a href="#">Prevention</a></li>
+                        <li><a href="#">Resources</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Important Information</h3>
+                    <ul>
+                        <li><a href="#">Travel Guidelines</a></li>
+                        <li><a href="#">Quarantine Rules</a></li>
+                        <li><a href="#">Business Protocols</a></li>
+                        <li><a href="#">School Guidelines</a></li>
+                        <li><a href="#">Latest Updates</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Contact Health Services</h3>
+                    <ul>
+                        <li><i class="fas fa-phone"></i> Emergency: 911</li>
+                        <li><i class="fas fa-phone-alt"></i> COVID Helpline: 1-800-XXX-XXXX</li>
+                        <li><i class="fas fa-envelope"></i> info@covidtracker.org</li>
+                        <li><i class="fas fa-map-marker-alt"></i> Health Department Locator</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 COVID-19 Information & Tracker. All information is for educational purposes. Consult healthcare professionals for medical advice.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Update stats with animation
+        function animateValue(element, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                element.innerHTML = Math.floor(progress * (end - start) + start).toLocaleString() + (end > 1000000 ? 'M' : '');
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        // Animate stats when they come into view
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const statCards = document.querySelectorAll('.stat-number');
+                    animateValue(statCards[0], 0, 675, 2000);
+                    animateValue(statCards[1], 0, 12.5, 2000);
+                    animateValue(statCards[2], 0, 648, 2000);
+                    animateValue(statCards[3], 0, 6.87, 2000);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        observer.observe(document.querySelector('.stats'));
+
+        // CTA button functionality
+        document.querySelector('.cta-button').addEventListener('click', function() {
+            document.querySelector('.resources').scrollIntoView({ behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>
