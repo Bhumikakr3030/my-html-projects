@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduSchedule - Timetable Generator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #7209b7;
+            --accent: #4cc9f0;
+            --success: #4ade80;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --text: #333333;
+            --text-light: #6c757d;
+            --white: #ffffff;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --radius: 8px;
+        }
+
+        body {
+            background-color: #f5f7fb;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--white);
+            padding: 1.5rem 0;
+            box-shadow: var(--shadow);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo i {
+            margin-right: 10px;
+            font-size: 2rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--white);
+            color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background: var(--light);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--white);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Main Content */
+        .main-content {
+            display: flex;
+            gap: 2rem;
+            padding: 2rem 0;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 300px;
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            height: fit-content;
+        }
+
+        .sidebar-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title i {
+            margin-right: 0.5rem;
+            color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid #dee2e6;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+            outline: none;
+        }
+
+        .time-inputs {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .time-inputs .form-control {
+            flex: 1;
+        }
+
+        .subjects-list, .teachers-list {
+            list-style: none;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #e9ecef;
+            border-radius: var(--radius);
+        }
+
+        .subject-item, .teacher-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .subject-item:last-child, .teacher-item:last-child {
+            border-bottom: none;
+        }
+
+        .subject-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            margin-right: 0.8rem;
+        }
+
+        .subject-info, .teacher-info {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            color: var(--primary);
+        }
+
+        /* Timetable */
+        .timetable-container {
+            flex: 1;
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .timetable-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .timetable-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .week-navigation {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .week-display {
+            font-weight: 600;
+        }
+
+        .nav-btn {
+            background: var(--light);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: #e9ecef;
+        }
+
+        .timetable {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .timetable th {
+            background: var(--light);
+            padding: 1rem;
+            text-align: center;
+            font-weight: 600;
+            color: var(--dark);
+            border: 1px solid #e9ecef;
+        }
+
+        .timetable td {
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid #e9ecef;
+            vertical-align: top;
+            height: 120px;
+            width: 14.28%; /* 100% / 7 days */
+        }
+
+        .period-time {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .period-slot {
+            background: var(--light);
+            padding: 0.8rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .period-slot:hover {
+            background: #e9ecef;
+        }
+
+        .period-slot.empty {
+            background: transparent;
+            border: 2px dashed #e9ecef;
+        }
+
+        .period-slot.empty:hover {
+            background: #f8f9fa;
+            border-color: var(--primary);
+        }
+
+        .subject-name {
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .teacher-name {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 0.3rem;
+        }
+
+        .classroom {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: var(--radius);
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            padding: 1.2rem 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        .color-picker {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .color-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .color-option.selected {
+            border-color: var(--dark);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+            }
+            
+            .timetable-container {
+                overflow-x: auto;
+            }
+            
+            .timetable {
+                min-width: 800px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+            
+            .timetable-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .week-navigation {
+                align-self: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>EduSchedule</span>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary">
+                        <i class="fas fa-print"></i> Print
+                    </button>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="main-content">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="sidebar-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-cog"></i>
+                        Timetable Settings
+                    </h3>
+                    <div class="form-group">
+                        <label for="timetableName">Timetable Name</label>
+                        <input type="text" id="timetableName" class="form-control" value="Class 10A - Weekly Schedule">
+                    </div>
+                    <div class="form-group">
+                        <label for="startTime">School Start Time</label>
+                        <input type="time" id="startTime" class="form-control" value="08:00">
+                    </div>
+                    <div class="form-group">
+                        <label for="periodDuration">Period Duration (minutes)</label>
+                        <input type="number" id="periodDuration" class="form-control" value="45" min="15" max="120">
+                    </div>
+                    <div class="form-group">
+                        <label for="breakDuration">Break Duration (minutes)</label>
+                        <input type="number" id="breakDuration" class="form-control" value="15" min="5" max="60">
+                    </div>
+                    <div class="form-group">
+                        <label for="periodsPerDay">Periods Per Day</label>
+                        <input type="number" id="periodsPerDay" class="form-control" value="8" min="1" max="12">
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-book"></i>
+                        Subjects
+                    </h3>
+                    <button class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;" id="addSubjectBtn">
+                        <i class="fas fa-plus"></i> Add Subject
+                    </button>
+                    <ul class="subjects-list" id="subjectsList">
+                        <!-- Subjects will be populated by JavaScript -->
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        Teachers
+                    </h3>
+                    <button class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;" id="addTeacherBtn">
+                        <i class="fas fa-plus"></i> Add Teacher
+                    </button>
+                    <ul class="teachers-list" id="teachersList">
+                        <!-- Teachers will be populated by JavaScript -->
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Timetable -->
+            <div class="timetable-container">
+                <div class="timetable-header">
+                    <h2 class="timetable-title">Weekly Timetable</h2>
+                    <div class="week-navigation">
+                        <button class="nav-btn" id="prevWeekBtn">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <div class="week-display" id="weekDisplay">Week 1, June 2023</div>
+                        <button class="nav-btn" id="nextWeekBtn">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="timetable-content">
+                    <table class="timetable" id="timetable">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Monday</th>
+                                <th>Tuesday</th>
+                                <th>Wednesday</th>
+                                <th>Thursday</th>
+                                <th>Friday</th>
+                                <th>Saturday</th>
+                            </tr>
+                        </thead>
+                        <tbody id="timetableBody">
+                            <!-- Timetable will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Subject Modal -->
+    <div class="modal" id="subjectModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New Subject</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="subjectName">Subject Name</label>
+                    <input type="text" id="subjectName" class="form-control" placeholder="e.g., Mathematics">
+                </div>
+                <div class="form-group">
+                    <label for="subjectCode">Subject Code</label>
+                    <input type="text" id="subjectCode" class="form-control" placeholder="e.g., MATH101">
+                </div>
+                <div class="form-group">
+                    <label>Subject Color</label>
+                    <div class="color-picker">
+                        <div class="color-option selected" style="background-color: #4361ee;" data-color="#4361ee"></div>
+                        <div class="color-option" style="background-color: #7209b7;" data-color="#7209b7"></div>
+                        <div class="color-option" style="background-color: #4cc9f0;" data-color="#4cc9f0"></div>
+                        <div class="color-option" style="background-color: #4ade80;" data-color="#4ade80"></div>
+                        <div class="color-option" style="background-color: #f59e0b;" data-color="#f59e0b"></div>
+                        <div class="color-option" style="background-color: #ef4444;" data-color="#ef4444"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelSubjectBtn">Cancel</button>
+                <button class="btn btn-primary" id="saveSubjectBtn">Save Subject</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Teacher Modal -->
+    <div class="modal" id="teacherModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New Teacher</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="teacherName">Teacher Name</label>
+                    <input type="text" id="teacherName" class="form-control" placeholder="e.g., Dr. Smith">
+                </div>
+                <div class="form-group">
+                    <label for="teacherEmail">Email</label>
+                    <input type="email" id="teacherEmail" class="form-control" placeholder="e.g., smith@school.edu">
+                </div>
+                <div class="form-group">
+                    <label for="teacherPhone">Phone</label>
+                    <input type="tel" id="teacherPhone" class="form-control" placeholder="e.g., +1 234 567 8900">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelTeacherBtn">Cancel</button>
+                <button class="btn btn-primary" id="saveTeacherBtn">Save Teacher</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Period Assignment Modal -->
+    <div class="modal" id="periodModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Assign Period</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="periodSubject">Subject</label>
+                    <select id="periodSubject" class="form-control">
+                        <option value="">Select Subject</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="periodTeacher">Teacher</label>
+                    <select id="periodTeacher" class="form-control">
+                        <option value="">Select Teacher</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="periodClassroom">Classroom</label>
+                    <input type="text" id="periodClassroom" class="form-control" placeholder="e.g., Room 101">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelPeriodBtn">Cancel</button>
+                <button class="btn btn-primary" id="savePeriodBtn">Save Period</button>
+                <button class="btn btn-danger" id="clearPeriodBtn" style="display: none;">Clear Period</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const timetableBody = document.getElementById('timetableBody');
+            const subjectsList = document.getElementById('subjectsList');
+            const teachersList = document.getElementById('teachersList');
+            const weekDisplay = document.getElementById('weekDisplay');
+            
+            // Modal Elements
+            const subjectModal = document.getElementById('subjectModal');
+            const teacherModal = document.getElementById('teacherModal');
+            const periodModal = document.getElementById('periodModal');
+            
+            // Buttons
+            const addSubjectBtn = document.getElementById('addSubjectBtn');
+            const addTeacherBtn = document.getElementById('addTeacherBtn');
+            const prevWeekBtn = document.getElementById('prevWeekBtn');
+            const nextWeekBtn = document.getElementById('nextWeekBtn');
+            
+            // Sample data
+            let subjects = [
+                { id: 1, name: 'Mathematics', code: 'MATH101', color: '#4361ee' },
+                { id: 2, name: 'Physics', code: 'PHYS102', color: '#7209b7' },
+                { id: 3, name: 'Chemistry', code: 'CHEM103', color: '#4cc9f0' },
+                { id: 4, name: 'Biology', code: 'BIO104', color: '#4ade80' },
+                { id: 5, name: 'English', code: 'ENG105', color: '#f59e0b' }
+            ];
+            
+            let teachers = [
+                { id: 1, name: 'Dr. Smith', email: 'smith@school.edu', phone: '+1 234 567 8901' },
+                { id: 2, name: 'Prof. Johnson', email: 'johnson@school.edu', phone: '+1 234 567 8902' },
+                { id: 3, name: 'Ms. Williams', email: 'williams@school.edu', phone: '+1 234 567 8903' },
+                { id: 4, name: 'Mr. Brown', email: 'brown@school.edu', phone: '+1 234 567 8904' }
+            ];
+            
+            let timetable = {};
+            let currentWeek = 1;
+            let selectedPeriod = null;
+            
+            // Days of the week
+            const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+            
+            // Initialize the app
+            function init() {
+                renderTimetable();
+                renderSubjectsList();
+                renderTeachersList();
+                setupEventListeners();
+                updateWeekDisplay();
+            }
+            
+            // Render the timetable
+            function renderTimetable() {
+                const startTime = document.getElementById('startTime').value;
+                const periodDuration = parseInt(document.getElementById('periodDuration').value);
+                const periodsPerDay = parseInt(document.getElementById('periodsPerDay').value);
+                
+                timetableBody.innerHTML = '';
+                
+                // Parse start time
+                const [startHour, startMinute] = startTime.split(':').map(Number);
+                
+                for (let period = 1; period <= periodsPerDay; period++) {
+                    const row = document.createElement('tr');
+                    
+                    // Calculate period times
+                    const periodStart = new Date(0, 0, 0, startHour, startMinute + (period - 1) * periodDuration);
+                    const periodEnd = new Date(0, 0, 0, startHour, startMinute + period * periodDuration);
+                    
+                    const startTimeStr = periodStart.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    const endTimeStr = periodEnd.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    
+                    // Time cell
+                    const timeCell = document.createElement('td');
+                    timeCell.innerHTML = `<div class="period-time">${startTimeStr} - ${endTimeStr}</div>`;
+                    row.appendChild(timeCell);
+                    
+                    // Day cells
+                    days.forEach(day => {
+                        const dayCell = document.createElement('td');
+                        const periodKey = `${day}-${period}`;
+                        
+                        if (timetable[periodKey]) {
+                            const periodData = timetable[periodKey];
+                            const subject = subjects.find(s => s.id === periodData.subjectId);
+                            const teacher = teachers.find(t => t.id === periodData.teacherId);
+                            
+                            dayCell.innerHTML = `
+                                <div class="period-slot" style="background-color: ${subject.color}; color: white;">
+                                    <div class="subject-name">${subject.name}</div>
+                                    <div class="teacher-name">${teacher.name}</div>
+                                    <div class="classroom">${periodData.classroom}</div>
+                                </div>
+                            `;
+                        } else {
+                            dayCell.innerHTML = `
+                                <div class="period-slot empty" data-period="${periodKey}">
+                                    <i class="fas fa-plus"></i>
+                                    <div>Add Period</div>
+                                </div>
+                            `;
+                        }
+                        
+                        dayCell.addEventListener('click', () => openPeriodModal(periodKey));
+                        row.appendChild(dayCell);
+                    });
+                    
+                    timetableBody.appendChild(row);
+                }
+            }
+            
+            // Render subjects list
+            function renderSubjectsList() {
+                subjectsList.innerHTML = '';
+                
+                if (subjects.length === 0) {
+                    subjectsList.innerHTML = '<p style="padding: 1rem; text-align: center; color: var(--text-light);">No subjects added</p>';
+                    return;
+                }
+                
+                subjects.forEach(subject => {
+                    const subjectItem = document.createElement('li');
+                    subjectItem.className = 'subject-item';
+                    subjectItem.innerHTML = `
+                        <div class="subject-info">
+                            <div class="subject-color" style="background-color: ${subject.color};"></div>
+                            <div>
+                                <div>${subject.name}</div>
+                                <div style="font-size: 0.8rem; color: var(--text-light);">${subject.code}</div>
+                            </div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="action-btn edit-subject" data-id="${subject.id}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn delete-subject" data-id="${subject.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    
+                    subjectsList.appendChild(subjectItem);
+                });
+            }
+            
+            // Render teachers list
+            function renderTeachersList() {
+                teachersList.innerHTML = '';
+                
+                if (teachers.length === 0) {
+                    teachersList.innerHTML = '<p style="padding: 1rem; text-align: center; color: var(--text-light);">No teachers added</p>';
+                    return;
+                }
+                
+                teachers.forEach(teacher => {
+                    const teacherItem = document.createElement('li');
+                    teacherItem.className = 'teacher-item';
+                    teacherItem.innerHTML = `
+                        <div class="teacher-info">
+                            <div>
+                                <div>${teacher.name}</div>
+                                <div style="font-size: 0.8rem; color: var(--text-light);">${teacher.email}</div>
+                            </div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="action-btn edit-teacher" data-id="${teacher.id}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn delete-teacher" data-id="${teacher.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    
+                    teachersList.appendChild(teacherItem);
+                });
+            }
+            
+            // Open period modal
+            function openPeriodModal(periodKey) {
+                selectedPeriod = periodKey;
+                const periodData = timetable[periodKey];
+                
+                // Populate subject dropdown
+                const subjectSelect = document.getElementById('periodSubject');
+                subjectSelect.innerHTML = '<option value="">Select Subject</option>';
+                subjects.forEach(subject => {
+                    const option = document.createElement('option');
+                    option.value = subject.id;
+                    option.textContent = subject.name;
+                    if (periodData && periodData.subjectId === subject.id) {
+                        option.selected = true;
+                    }
+                    subjectSelect.appendChild(option);
+                });
+                
+                // Populate teacher dropdown
+                const teacherSelect = document.getElementById('periodTeacher');
+                teacherSelect.innerHTML = '<option value="">Select Teacher</option>';
+                teachers.forEach(teacher => {
+                    const option = document.createElement('option');
+                    option.value = teacher.id;
+                    option.textContent = teacher.name;
+                    if (periodData && periodData.teacherId === teacher.id) {
+                        option.selected = true;
+                    }
+                    teacherSelect.appendChild(option);
+                });
+                
+                // Set classroom
+                document.getElementById('periodClassroom').value = periodData ? periodData.classroom : '';
+                
+                // Show/hide clear button
+                document.getElementById('clearPeriodBtn').style.display = periodData ? 'block' : 'none';
+                
+                openModal(periodModal);
+            }
+            
+            // Save period assignment
+            function savePeriod() {
+                if (!selectedPeriod) return;
+                
+                const subjectId = parseInt(document.getElementById('periodSubject').value);
+                const teacherId = parseInt(document.getElementById('periodTeacher').value);
+                const classroom = document.getElementById('periodClassroom').value;
+                
+                if (!subjectId || !teacherId || !classroom) {
+                    alert('Please fill in all fields');
+                    return;
+                }
+                
+                timetable[selectedPeriod] = {
+                    subjectId: subjectId,
+                    teacherId: teacherId,
+                    classroom: classroom
+                };
+                
+                closeModal(periodModal);
+                renderTimetable();
+            }
+            
+            // Clear period assignment
+            function clearPeriod() {
+                if (!selectedPeriod) return;
+                
+                delete timetable[selectedPeriod];
+                closeModal(periodModal);
+                renderTimetable();
+            }
+            
+            // Add new subject
+            function addSubject() {
+                const name = document.getElementById('subjectName').value.trim();
+                const code = document.getElementById('subjectCode').value.trim();
+                const color = document.querySelector('.color-option.selected').getAttribute('data-color');
+                
+                if (!name || !code) {
+                    alert('Please fill in all fields');
+                    return;
+                }
+                
+                const newSubject = {
+                    id: Date.now(),
+                    name: name,
+                    code: code,
+                    color: color
+                };
+                
+                subjects.push(newSubject);
+                closeModal(subjectModal);
+                renderSubjectsList();
+                
+                // Clear form
+                document.getElementById('subjectName').value = '';
+                document.getElementById('subjectCode').value = '';
+            }
+            
+            // Add new teacher
+            function addTeacher() {
+                const name = document.getElementById('teacherName').value.trim();
+                const email = document.getElementById('teacherEmail').value.trim();
+                const phone = document.getElementById('teacherPhone').value.trim();
+                
+                if (!name || !email) {
+                    alert('Please fill in all required fields');
+                    return;
+                }
+                
+                const newTeacher = {
+                    id: Date.now(),
+                    name: name,
+                    email: email,
+                    phone: phone
+                };
+                
+                teachers.push(newTeacher);
+                closeModal(teacherModal);
+                renderTeachersList();
+                
+                // Clear form
+                document.getElementById('teacherName').value = '';
+                document.getElementById('teacherEmail').value = '';
+                document.getElementById('teacherPhone').value = '';
+            }
+            
+            // Update week display
+            function updateWeekDisplay() {
+                const baseDate = new Date(2023, 5, 5 + (currentWeek - 1) * 7); // June 5, 2023 + weeks
+                weekDisplay.textContent = `Week ${currentWeek}, June 2023`;
+            }
+            
+            // Open modal
+            function openModal(modal) {
+                modal.style.display = 'flex';
+            }
+            
+            // Close modal
+            function closeModal(modal) {
+                modal.style.display = 'none';
+            }
+            
+            // Setup event listeners
+            function setupEventListeners() {
+                // Modal buttons
+                addSubjectBtn.addEventListener('click', () => openModal(subjectModal));
+                addTeacherBtn.addEventListener('click', () => openModal(teacherModal));
+                
+                // Subject modal
+                document.getElementById('cancelSubjectBtn').addEventListener('click', () => closeModal(subjectModal));
+                document.getElementById('saveSubjectBtn').addEventListener('click', addSubject);
+                
+                // Teacher modal
+                document.getElementById('cancelTeacherBtn').addEventListener('click', () => closeModal(teacherModal));
+                document.getElementById('saveTeacherBtn').addEventListener('click', addTeacher);
+                
+                // Period modal
+                document.getElementById('cancelPeriodBtn').addEventListener('click', () => closeModal(periodModal));
+                document.getElementById('savePeriodBtn').addEventListener('click', savePeriod);
+                document.getElementById('clearPeriodBtn').addEventListener('click', clearPeriod);
+                
+                // Week navigation
+                prevWeekBtn.addEventListener('click', () => {
+                    if (currentWeek > 1) {
+                        currentWeek--;
+                        updateWeekDisplay();
+                    }
+                });
+                
+                nextWeekBtn.addEventListener('click', () => {
+                    currentWeek++;
+                    updateWeekDisplay();
+                });
+                
+                // Color picker
+                document.querySelectorAll('.color-option').forEach(option => {
+                    option.addEventListener('click', function() {
+                        document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('selected'));
+                        this.classList.add('selected');
+                    });
+                });
+                
+                // Settings changes
+                document.getElementById('startTime').addEventListener('change', renderTimetable);
+                document.getElementById('periodDuration').addEventListener('change', renderTimetable);
+                document.getElementById('periodsPerDay').addEventListener('change', renderTimetable);
+                
+                // Close modals when clicking outside
+                window.addEventListener('click', function(event) {
+                    if (event.target.classList.contains('modal')) {
+                        closeModal(event.target);
+                    }
+                });
+            }
+            
+            // Initialize the app
+            init();
+        });
+    </script>
+</body>
+</html>
