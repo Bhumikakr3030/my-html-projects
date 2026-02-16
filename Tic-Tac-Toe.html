@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Tic-Tac-Toe</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            flex-direction: column;
+            font-family: Arial, sans-serif;
+        }
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 5px;
+        }
+        .cell {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #fff;
+            border: 2px solid #000;
+            font-size: 2em;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+<h2>Tic-Tac-Toe</h2>
+
+<div class="game-board">
+    <div class="cell" onclick="placeMark(this)"></div>
+    <div class="cell" onclick="placeMark(this)"></div>
+    <div class="cell" onclick="placeMark(this)"></div>
+    <div class="cell" onclick="placeMark(this)"></div>
+    <div class="cell" onclick="placeMark(this)"></div>
+    <div class="cell" onclick="placeMark(this)"></div>
+    <div class="cell" onclick="placeMark(this)"></div>
+    <div class="cell" onclick="placeMark(this)"></div>
+    <div class="cell" onclick="placeMark(this)"></div>
+</div>
+
+<script>
+    let currentPlayer = 'X';
+
+    function placeMark(cell) {
+        if (cell.textContent === '') {
+            cell.textContent = currentPlayer;
+            if (checkWin()) {
+                alert(currentPlayer + ' wins!');
+                resetBoard();
+            } else if (isBoardFull()) {
+                alert("It's a draw!");
+                resetBoard();
+            } else {
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+            }
+        }
+    }
+
+    function checkWin() {
+        const cells = document.querySelectorAll('.cell');
+        const winningCombos = [
+            [0,1,2],[3,4,5],[6,7,8],
+            [0,3,6],[1,4,7],[2,5,8],
+            [0,4,8],[2,4,6]
+        ];
+
+        for (let combo of winningCombos) {
+            if (
+                cells[combo[0]].textContent &&
+                cells[combo[0]].textContent === cells[combo[1]].textContent &&
+                cells[combo[1]].textContent === cells[combo[2]].textContent
+            ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function isBoardFull() {
+        return [...document.querySelectorAll('.cell')]
+            .every(cell => cell.textContent !== '');
+    }
+
+    function resetBoard() {
+        document.querySelectorAll('.cell')
+            .forEach(cell => cell.textContent = '');
+        currentPlayer = 'X';
+    }
+</script>
+
+</body>
+</html>
