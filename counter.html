@@ -1,0 +1,153 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Counter App</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: #1760e8;
+            width: 500px;
+            padding: 50px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .counter {
+            background: white;
+            width: 320px;
+            padding: 35px;
+            border-radius: 25px;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 35px;
+        }
+
+        .display {
+            background: #f3f4f6;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+
+        .display p {
+            font-size: 12px;
+            letter-spacing: 3px;
+            color: gray;
+        }
+
+        #count {
+            font-size: 65px;
+            font-weight: bold;
+            margin: 10px;
+        }
+
+        button {
+            border: none;
+            padding: 15px 25px;
+            border-radius: 12px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .minus {
+            background: #dce8ff;
+            color: #1760e8;
+        }
+
+        .plus {
+            background: #1760e8;
+            color: white;
+        }
+
+        .reset {
+            background: #eeeeee;
+            color: #333;
+            font-size: 15px;
+            width: 150px;
+            margin-top: 25px;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="counter">
+
+            <h1>Counter</h1>
+
+            <div class="display">
+                <p>CURRENT COUNT</p>
+                <div id="count">0</div>
+            </div>
+
+            <button class="minus" id="decrease">−</button>
+
+            <button class="plus" id="increase">+</button>
+
+            <br>
+
+            <button class="reset" id="reset">Reset</button>
+
+        </div>
+    </div>
+
+    <script>
+        let count = 0;
+
+        const countDisplay = document.getElementById("count");
+        const decrease = document.getElementById("decrease");
+        const increase = document.getElementById("increase");
+        const reset = document.getElementById("reset");
+
+        function updateDisplay() {
+            countDisplay.textContent = count;
+            decrease.disabled = count === 0;
+        }
+
+        increase.addEventListener("click", function() {
+            count++;
+            updateDisplay();
+        });
+
+        decrease.addEventListener("click", function() {
+            if (count > 0) {
+                count--;
+            }
+            updateDisplay();
+        });
+
+        reset.addEventListener("click", function() {
+            count = 0;
+            updateDisplay();
+        });
+
+        updateDisplay();
+    </script>
+
+</body>
+</html>
