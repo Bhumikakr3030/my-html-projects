@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rock Paper Scissors</title>
+<style>
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: system-ui, Arial, sans-serif;
+    text-align: center;
+    background: linear-gradient(135deg, #eaf0ff, #dbe4ff);
+    min-height: 100vh;
+    margin: 0;
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .game {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    max-width: 460px;
+    width: 100%;
+    box-shadow: 0 10px 30px rgba(37, 99, 235, 0.15);
+  }
+
+  h1 { margin-top: 0; color: #1e3a8a; }
+
+  .buttons { display: flex; justify-content: center; flex-wrap: wrap; }
+
+  button.move {
+    padding: 18px 22px;
+    margin: 8px;
+    font-size: 22px;
+    cursor: pointer;
+    border: none;
+    border-radius: 14px;
+    background: #2563eb;
+    color: white;
+    transition: transform 0.1s, background 0.2s;
+  }
+
+  button.move:hover { background: #1e40af; transform: translateY(-2px); }
+  button.move:active { transform: translateY(1px); }
+  button.move:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  .scoreboard {
+    display: flex;
+    justify-content: space-around;
+    margin: 22px 0;
+    padding: 14px;
+    background: #f1f5ff;
+    border-radius: 12px;
+    font-weight: bold;
+    color: #1e3a8a;
+  }
+
+  .scoreboard div span { display: block; font-size: 26px; margin-top: 4px; }
+
+  .choices { font-size: 17px; color: #374151; line-height: 1.6; }
+
+  #result {
+    font-size: 24px;
+    font-weight: bold;
+    margin-top: 20px;
+    min-height: 34px;
+    transition: color 0.2s;
+  }
+
+  #result.win  { color: #16a34a; }
+  #result.lose { color: #dc2626; }
+  #result.tie  { color: #6b7280; }
+
+  button.reset {
+    margin-top: 15px;
+    padding: 12px 20px;
+    font-size: 16px;
+    border: 2px solid #2563eb;
+    border-radius: 10px;
+    background: white;
+    color: #2563eb;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  button.reset:hover { background: #2563eb; color: white; }
+
+  .hint { margin-top: 16px; font-size: 13px; color: #9ca3af; }
+</style>
+</head>
+<body>
+
+<div class="game">
+  <h1>Rock Paper Scissors</h1>
+
+  <div class="buttons">
+    <button class="move" onclick="play('rock')">✊ Rock</button>
+    <button class="move" onclick="play('paper')">✋ Paper</button>
+    <button class="move" onclick="play('scissors')">✌️ Scissors</button>
+  </div>
+
+  <div class="scoreboard">
+    <div>You<span id="scoreUser">0</span></div>
+    <div>Ties<span id="scoreTie">0</span></div>
+    <div>Computer<span id="scoreComp">0</span></div>
+  </div>
+
+  <div class="choices">
+    <h3 id="user">Your choice: —</h3>
+    <h3 id="computer">Computer choice: —</h3>
+  </div>
+
+  <p id="result">Choose your move!</p>
+
+  <button class="reset" onclick="resetGame()">Reset Score</button>
+
+  <p class="hint">Tip: press <b>R</b>, <b>P</b>, or <b>S</b> on your keyboard</p>
+</div>
+
+<script>
+  const choices = ["rock", "paper", "scissors"];
+  const emoji = { rock: "✊", paper: "✋", scissors: "✌️" };
+
+  let score = { user: 0, tie: 0, comp: 0 };
+  let locked = false;
+
+  const resultEl = document.getElementById("result");
+  const userEl   = document.getElementById("user");
+  const compEl   = document.getElementById("computer");
+
+  function play(player) {
+    if (locked) return;      // ignore clicks while "thinking"
+    locked = true;
+
+    const computer = choices[Math.floor(Math.random() * 3)];
+
+    userEl.innerText = "Your choice: " + emoji[player] + " " + capitalize(player);
+    compEl.innerText = "Computer choice: thinking…";
+    resultEl.innerText = "…";
+    resultEl.className = "";
+
+    // Small delay so the computer "thinks"
+    setTimeout(() => {
+      compEl.innerText = "Computer choice: " + emoji[computer] + " " + capitalize(computer);
+
+      let outcome;
+      if (player === computer) {
+        outcome = "tie";
+        resultEl.innerText = "It's a Tie!";
+      } else if (
+        (player === "rock"     && computer === "scissors") ||
+        (player === "paper"    && computer === "rock")     ||
+        (player === "scissors" && computer === "paper")
+      ) {
+        outcome = "win";
+        resultEl.innerText = "You Win! 🎉";
+      } else {
+        outcome = "lose";
+        resultEl.innerText = "Computer Wins! 🤖";
+      }
+
+      resultEl.className = outcome;
+      score[outcome]++;
+      document.getElementById("scoreUser").innerText = score.user;
+      document.getElementById("scoreTie").innerText  = score.tie;
+      document.getElementById("scoreComp").innerText = score.comp;
+
+      locked = false;
+    }, 450);
+  }
+
+  function capitalize(s) {
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  }
+
+  function resetGame() {
+    score = { user: 0, tie: 0, comp: 0 };
+    document.getElementById("scoreUser").innerText = 0;
+    document.getElementById("scoreTie").innerText  = 0;
+    document.getElementById("scoreComp").innerText = 0;
+
+    userEl.innerText = "Your choice: —";
+    compEl.innerText = "Computer choice: —";
+    resultEl.innerText = "Choose your move!";
+    resultEl.className = "";
+  }
+
+  // Keyboard shortcuts
+  document.addEventListener("keydown", (e) => {
+    const key = e.key.toLowerCase();
+    if (key === "r") play("rock");
+    else if (key === "p") play("paper");
+    else if (key === "s") play("scissors");
+  });
+</script>
+
+</body>
+</html>
