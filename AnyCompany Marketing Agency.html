@@ -1,121 +1,235 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>AnyCompany Marketing Agency</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        header {
-            background-color: #333;
-            color: #fff;
-            padding: 1rem 0;
-            text-align: center;
-        }
-        nav {
-            display: flex;
-            justify-content: center;
-            background-color: #444;
-        }
-        nav a {
-            color: #fff;
-            padding: 1rem;
-            text-decoration: none;
-            text-transform: uppercase;
-        }
-        nav a:hover {
-            background-color: #555;
-        }
-        .hero {
-            background: url('https://via.placeholder.com/1200x400') no-repeat center center/cover;
-            height: 400px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            text-align: center;
-        }
-        .hero h1 {
-            font-size: 3rem;
-            margin: 0;
-        }
-        .container {
-            padding: 2rem;
-        }
-        .services, .about {
-            margin: 2rem 0;
-        }
-        .services h2, .about h2 {
-            text-align: center;
-            margin-bottom: 1rem;
-        }
-        .services ul {
-            list-style: none;
-            padding: 0;
-            text-align: center;
-        }
-        .services li {
-            margin: 0.5rem 0;
-        }
-        .about p {
-            text-align: center;
-        }
-        footer {
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            padding: 1rem 0;
-        }
-    </style>
-</head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AnyCompany Marketing Agency</title>
+  <style>
+    :root {
+      --dark: #1f2937;
+      --darker: #111827;
+      --accent: #2563eb;
+      --accent-hover: #1e40af;
+      --bg: #f8fafc;
+      --text: #334155;
+    }
 
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: system-ui, -apple-system, Arial, sans-serif;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* ---------- Header / Nav ---------- */
+    header {
+      background: var(--dark);
+      color: #fff;
+      padding: 1.2rem 0;
+      text-align: center;
+    }
+    header h1 { margin: 0; font-size: 1.6rem; letter-spacing: 0.5px; }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      background: var(--darker);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    nav a {
+      color: #cbd5e1;
+      padding: 1rem 1.4rem;
+      text-decoration: none;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+      transition: background 0.2s, color 0.2s;
+    }
+    nav a:hover, nav a:focus {
+      background: var(--accent);
+      color: #fff;
+      outline: none;
+    }
+
+    /* ---------- Hero ---------- */
+    .hero {
+      /* Gradient fallback means text is always readable */
+      background:
+        linear-gradient(rgba(17, 24, 39, 0.6), rgba(17, 24, 39, 0.6)),
+        linear-gradient(135deg, #2563eb, #7c3aed);
+      min-height: 420px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      text-align: center;
+      padding: 2rem;
+    }
+    .hero h1 { font-size: clamp(1.8rem, 5vw, 3rem); margin: 0 0 0.5rem; }
+    .hero p  { font-size: 1.1rem; opacity: 0.9; margin: 0 0 1.5rem; max-width: 540px; }
+
+    .cta {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      padding: 0.85rem 1.8rem;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .cta:hover { background: var(--accent-hover); transform: translateY(-2px); }
+
+    /* ---------- Layout ---------- */
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 4rem 1.5rem;
+    }
+
+    section { margin-bottom: 4rem; scroll-margin-top: 70px; }
+
+    h2 {
+      text-align: center;
+      font-size: 1.8rem;
+      color: var(--dark);
+      margin: 0 0 0.5rem;
+    }
+    .subtitle {
+      text-align: center;
+      color: #64748b;
+      margin: 0 auto 2.5rem;
+      max-width: 520px;
+    }
+
+    /* ---------- Services cards ---------- */
+    .services ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.2rem;
+    }
+    .services li {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 1.5rem 1rem;
+      text-align: center;
+      font-weight: 600;
+      color: var(--dark);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    }
+    .services li:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.15);
+      border-color: var(--accent);
+    }
+    .services li .icon { display: block; font-size: 1.8rem; margin-bottom: 0.6rem; }
+
+    /* ---------- About ---------- */
+    .about p {
+      max-width: 680px;
+      margin: 0 auto;
+      text-align: center;
+      color: #475569;
+    }
+
+    /* ---------- Contact ---------- */
+    .contact { text-align: center; }
+    .contact a {
+      color: var(--accent);
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .contact a:hover { text-decoration: underline; }
+
+    /* ---------- Footer ---------- */
+    footer {
+      background: var(--dark);
+      color: #94a3b8;
+      text-align: center;
+      padding: 1.5rem 0;
+      font-size: 0.9rem;
+    }
+
+    /* ---------- Small screens ---------- */
+    @media (max-width: 480px) {
+      nav { flex-direction: column; }
+      nav a { padding: 0.8rem; }
+      .container { padding: 2.5rem 1rem; }
+    }
+  </style>
+</head>
 <body>
 
-<header>
+  <header>
     <h1>AnyCompany Marketing Agency</h1>
-</header>
+  </header>
 
-<nav>
+  <nav aria-label="Main navigation">
     <a href="#services">Services</a>
     <a href="#about">About</a>
     <a href="#contact">Contact</a>
-</nav>
+  </nav>
 
-<section class="hero">
+  <section class="hero" aria-label="Intro">
     <h1>Your Success, Our Mission</h1>
-</section>
+    <p>Strategic marketing that turns ambitious brands into market leaders.</p>
+    <a href="#contact" class="cta">Get a Free Consultation</a>
+  </section>
 
-<div class="container">
+  <div class="container">
 
     <section id="services" class="services">
-        <h2>Our Services</h2>
-        <ul>
-            <li>Digital Marketing</li>
-            <li>SEO Optimization</li>
-            <li>Social Media Management</li>
-            <li>Content Creation</li>
-            <li>Brand Strategy</li>
-        </ul>
+      <h2>Our Services</h2>
+      <p class="subtitle">Everything you need to grow your brand online and off.</p>
+      <ul>
+        <li><span class="icon">📈</span>Digital Marketing</li>
+        <li><span class="icon">🔍</span>SEO Optimization</li>
+        <li><span class="icon">💬</span>Social Media Management</li>
+        <li><span class="icon">✍️</span>Content Creation</li>
+        <li><span class="icon">🎯</span>Brand Strategy</li>
+      </ul>
     </section>
 
     <section id="about" class="about">
-        <h2>About Us</h2>
-        <p>
-            AnyCompany Marketing Agency is dedicated to helping businesses grow through innovative marketing strategies.
-            Our team of experts is committed to delivering exceptional results and driving your success.
-        </p>
+      <h2>About Us</h2>
+      <p>
+        AnyCompany Marketing Agency is dedicated to helping businesses grow through
+        innovative marketing strategies. Our team of experts is committed to
+        delivering exceptional results and driving your success.
+      </p>
     </section>
 
-</div>
+    <section id="contact" class="contact">
+      <h2>Contact</h2>
+      <p>Ready to grow? Email us at
+        <a href="mailto:hello@anycompany.example">hello@anycompany.example</a>
+        or call <a href="tel:+15551234567">+1 (555) 123-4567</a>.
+      </p>
+    </section>
 
-<footer>
-    © 2023 AnyCompany Marketing Agency. All rights reserved.
-</footer>
+  </div>
+
+  <footer>
+    © <span id="year"></span> AnyCompany Marketing Agency. All rights reserved.
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
 
 </body>
 </html>
